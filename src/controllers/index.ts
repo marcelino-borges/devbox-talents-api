@@ -45,10 +45,18 @@ export const getTalent = async (req: Request, res: Response) => {
 };
 
 export const createTalent = async (req: Request, res: Response) => {
-  const { firstName, lastName, email, skills, jobHistory, links } = req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    skills,
+    jobHistory,
+    personalWebsite,
+    linkedin,
+    instagram,
+    git,
+  } = req.body;
   let skillsNormalized = skills;
-  let jobHistoryNormalized = jobHistory;
-  let linksNormalized = links;
 
   if (!firstName?.length) {
     return res.status(400).json({
@@ -75,21 +83,16 @@ export const createTalent = async (req: Request, res: Response) => {
     skillsNormalized = [];
   }
 
-  if (!jobHistoryNormalized) {
-    jobHistoryNormalized = [];
-  }
-
-  if (!linksNormalized) {
-    linksNormalized = [];
-  }
-
   const talentToCreate: Talent = {
     firstName,
     lastName,
     email,
     skills: skillsNormalized,
-    jobHistory: jobHistoryNormalized,
-    links: linksNormalized,
+    jobHistory,
+    personalWebsite,
+    linkedin,
+    instagram,
+    git,
   };
 
   try {
@@ -108,11 +111,19 @@ export const createTalent = async (req: Request, res: Response) => {
 };
 
 export const updateTalent = async (req: Request, res: Response) => {
-  const { _id, firstName, lastName, email, skills, jobHistory, links } =
-    req.body;
+  const {
+    _id,
+    firstName,
+    lastName,
+    email,
+    skills,
+    jobHistory,
+    personalWebsite,
+    linkedin,
+    instagram,
+    git,
+  } = req.body;
   let skillsNormalized = skills;
-  let jobHistoryNormalized = jobHistory;
-  let linksNormalized = links;
 
   if (!_id?.length) {
     return res.status(400).json({
@@ -146,22 +157,17 @@ export const updateTalent = async (req: Request, res: Response) => {
     skillsNormalized = [];
   }
 
-  if (!jobHistoryNormalized) {
-    jobHistoryNormalized = [];
-  }
-
-  if (!linksNormalized) {
-    linksNormalized = [];
-  }
-
   const talentToCreate: Talent = {
     _id,
     firstName,
     lastName,
     email,
     skills: skillsNormalized,
-    jobHistory: jobHistoryNormalized,
-    links: linksNormalized,
+    jobHistory: jobHistory || "",
+    personalWebsite: personalWebsite,
+    linkedin: linkedin || "",
+    instagram: instagram || "",
+    git: git || "",
   };
 
   try {
