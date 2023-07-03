@@ -30,11 +30,11 @@ if (canReadEnv) {
       app.options("/api/v1");
       app.use("/api/v1", mainRoutes);
 
-      const server = app.listen(PORT, HOST, () => {
+      const server = app.listen(PORT || 5000, HOST || "0.0.0.0", () => {
         log.success(`API listening on port ${PORT}`);
       });
 
-      const TIMEOUT = parseInt(process.env.SERVER_TIMEOUT || "3000", 10);
+      const TIMEOUT = parseInt(process.env.SERVER_TIMEOUT || "10000", 10);
 
       server.timeout = TIMEOUT;
     })
