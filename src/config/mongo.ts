@@ -10,7 +10,6 @@ const connect = async () => {
   }
 
   log.info("Connecting to mongo...");
-  log.info("MONGO_CONNECTION_STRING: ", connString);
 
   try {
     await mongoose.connect(connString, {
