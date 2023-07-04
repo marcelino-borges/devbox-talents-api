@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 
 export interface Talent {
   _id?: string;
+  authId?: string;
   firstName: string;
   lastName: string;
   email: string;

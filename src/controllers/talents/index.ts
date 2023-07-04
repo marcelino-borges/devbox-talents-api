@@ -46,6 +46,7 @@ export const getTalent = async (req: Request, res: Response) => {
 
 export const createTalent = async (req: Request, res: Response) => {
   const {
+    authId,
     firstName,
     lastName,
     email,
@@ -87,6 +88,7 @@ export const createTalent = async (req: Request, res: Response) => {
   }
 
   const talentToCreate: Talent = {
+    authId,
     firstName,
     lastName,
     email,
@@ -117,6 +119,7 @@ export const createTalent = async (req: Request, res: Response) => {
 export const updateTalent = async (req: Request, res: Response) => {
   const {
     _id,
+    authId,
     firstName,
     lastName,
     email,
@@ -168,6 +171,7 @@ export const updateTalent = async (req: Request, res: Response) => {
     firstName,
     lastName,
     email,
+    authId,
     languages: languages || [],
     frameworks: frameworks || [],
     databases: databases || [],
