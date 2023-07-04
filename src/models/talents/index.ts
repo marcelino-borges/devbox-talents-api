@@ -5,12 +5,18 @@ export interface Talent {
   firstName: string;
   lastName: string;
   email: string;
-  skills?: string[];
+  languages?: Skill[];
+  frameworks?: Skill[];
+  databases?: Skill[];
+  otherSkills?: Skill[];
   jobHistory?: Job[];
-  personalWebsite?: string;
-  linkedin: string;
-  instagram?: string;
-  git?: string;
+  educationHistory?: Education[];
+  social: {
+    personalWebsite?: string;
+    linkedin: string;
+    instagram?: string;
+    git?: string;
+  };
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -22,10 +28,17 @@ export interface Job {
   location: string;
   locationType: LocationType;
   currentEmployment: boolean;
-  startData: Date;
-  endDate: Date;
+  startDate: Date;
+  endDate?: Date;
   description: string;
-  skills: string[];
+  skills: Skill[];
+}
+
+export interface Education {
+  institution: string;
+  course: string;
+  start: Date;
+  end?: Date;
 }
 
 export enum EmploymentType {
@@ -44,10 +57,33 @@ export enum LocationType {
   HYBRID,
 }
 
+export interface Skill {
+  label: string;
+  value: string;
+}
+
 export interface TalentQuery {
   id?: string;
   email?: string;
 }
+
+const educationSchema = new Schema<Education>(
+  {
+    institution: { type: String, required: true },
+    course: { type: String, required: true },
+    start: { type: Date, required: true },
+    end: { type: Date },
+  },
+  { timestamps: true }
+);
+
+const skillSchema = new Schema<Skill>(
+  {
+    label: { type: String, required: true },
+    value: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
 const jobSchema = new Schema<Job>(
   {
@@ -57,10 +93,10 @@ const jobSchema = new Schema<Job>(
     location: { type: String, required: true },
     locationType: { type: Number, required: true },
     currentEmployment: { type: Boolean, required: true },
-    startData: { type: Date, required: true },
+    startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     description: { type: String, required: true },
-    skills: { type: [String], default: [] },
+    skills: { type: [skillSchema], default: [] },
   },
   { timestamps: true }
 );
@@ -70,12 +106,20 @@ const talentSchema = new Schema<Talent>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    skills: { type: [String], default: [] },
+    languages: { type: [skillSchema], default: [] },
+    frameworks: { type: [skillSchema], default: [] },
+    databases: { type: [skillSchema], default: [] },
+    otherSkills: { type: [skillSchema], default: [] },
     jobHistory: { type: [jobSchema], default: [] },
-    personalWebsite: { type: String },
-    linkedin: { type: String, required: true },
-    instagram: { type: String },
-    git: { type: String },
+    educationHistory: { type: [educationSchema], default: [] },
+    social: {
+      type: {
+        personalWebsite: { type: String },
+        linkedin: { type: String, required: true },
+        instagram: { type: String },
+        git: { type: String },
+      },
+    },
   },
   { timestamps: true }
 );

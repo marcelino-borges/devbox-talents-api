@@ -30,11 +30,11 @@ export const getTalent = async (req: Request, res: Response) => {
   }
 
   try {
-    const talents = await TalentsService.getTalent({ id, email });
+    const talent = await TalentsService.getTalent({ id, email });
 
     return res.status(200).json({
       message: "Talent found",
-      data: talents,
+      data: talent,
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -49,12 +49,13 @@ export const createTalent = async (req: Request, res: Response) => {
     firstName,
     lastName,
     email,
-    skills,
+    languages,
+    frameworks,
+    databases,
+    otherSkills,
     jobHistory,
-    personalWebsite,
-    linkedin,
-    instagram,
-    git,
+    educationHistory,
+    social,
   } = req.body;
 
   if (!firstName?.length) {
@@ -78,7 +79,7 @@ export const createTalent = async (req: Request, res: Response) => {
     });
   }
 
-  if (!linkedin?.length) {
+  if (!social?.linkedin?.length) {
     return res.status(400).json({
       message: "Talent linkedin required.",
       data: null,
@@ -89,12 +90,13 @@ export const createTalent = async (req: Request, res: Response) => {
     firstName,
     lastName,
     email,
-    skills: skills || [],
+    languages: languages || [],
+    frameworks: frameworks || [],
+    databases: databases || [],
+    otherSkills: otherSkills || [],
     jobHistory: jobHistory || [],
-    personalWebsite: personalWebsite || "",
-    linkedin,
-    instagram: instagram || "",
-    git: git || "",
+    educationHistory: educationHistory || [],
+    social,
   };
 
   try {
@@ -118,12 +120,13 @@ export const updateTalent = async (req: Request, res: Response) => {
     firstName,
     lastName,
     email,
-    skills,
+    languages,
+    frameworks,
+    databases,
+    otherSkills,
     jobHistory,
-    personalWebsite,
-    linkedin,
-    instagram,
-    git,
+    educationHistory,
+    social,
   } = req.body;
 
   if (!_id?.length) {
@@ -154,28 +157,28 @@ export const updateTalent = async (req: Request, res: Response) => {
     });
   }
 
-  if (!linkedin?.length) {
+  if (!social?.linkedin?.length) {
     return res.status(400).json({
       message: "Talent linkedin required.",
       data: null,
     });
   }
 
-  const talentToCreate: Talent = {
-    _id,
+  const talentToUpdate: Talent = {
     firstName,
     lastName,
     email,
-    skills: skills || [],
+    languages: languages || [],
+    frameworks: frameworks || [],
+    databases: databases || [],
+    otherSkills: otherSkills || [],
     jobHistory: jobHistory || [],
-    personalWebsite: personalWebsite || "",
-    linkedin: linkedin,
-    instagram: instagram || "",
-    git: git || "",
+    educationHistory: educationHistory || [],
+    social,
   };
 
   try {
-    const talentUpdated = await TalentsService.createTalent(talentToCreate);
+    const talentUpdated = await TalentsService.createTalent(talentToUpdate);
 
     return res.status(200).json({
       message: "Talent updated",
