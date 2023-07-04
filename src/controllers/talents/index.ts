@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import * as TalentsService from "../services/talents";
-import { Talent } from "../models/talents";
+import * as TalentsService from "../../services/talents";
+import { Talent } from "../../models/talents";
 
 export const getTalents = async (_: Request, res: Response) => {
   try {
@@ -19,8 +19,8 @@ export const getTalents = async (_: Request, res: Response) => {
 };
 
 export const getTalent = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  const email = req.params.email;
+  const id = req.query.id as string;
+  const email = req.query.email as string;
 
   if (!id?.length && !email?.length) {
     return res.status(400).json({
@@ -56,7 +56,6 @@ export const createTalent = async (req: Request, res: Response) => {
     instagram,
     git,
   } = req.body;
-  let skillsNormalized = skills;
 
   if (!firstName?.length) {
     return res.status(400).json({
@@ -79,20 +78,23 @@ export const createTalent = async (req: Request, res: Response) => {
     });
   }
 
-  if (!skillsNormalized) {
-    skillsNormalized = [];
+  if (!linkedin?.length) {
+    return res.status(400).json({
+      message: "Talent linkedin required.",
+      data: null,
+    });
   }
 
   const talentToCreate: Talent = {
     firstName,
     lastName,
     email,
-    skills: skillsNormalized,
-    jobHistory,
-    personalWebsite,
+    skills: skills || [],
+    jobHistory: jobHistory || [],
+    personalWebsite: personalWebsite || "",
     linkedin,
-    instagram,
-    git,
+    instagram: instagram || "",
+    git: git || "",
   };
 
   try {
@@ -123,7 +125,6 @@ export const updateTalent = async (req: Request, res: Response) => {
     instagram,
     git,
   } = req.body;
-  let skillsNormalized = skills;
 
   if (!_id?.length) {
     return res.status(400).json({
@@ -153,8 +154,11 @@ export const updateTalent = async (req: Request, res: Response) => {
     });
   }
 
-  if (!skillsNormalized) {
-    skillsNormalized = [];
+  if (!linkedin?.length) {
+    return res.status(400).json({
+      message: "Talent linkedin required.",
+      data: null,
+    });
   }
 
   const talentToCreate: Talent = {
@@ -162,10 +166,10 @@ export const updateTalent = async (req: Request, res: Response) => {
     firstName,
     lastName,
     email,
-    skills: skillsNormalized,
-    jobHistory: jobHistory || "",
-    personalWebsite: personalWebsite,
-    linkedin: linkedin || "",
+    skills: skills || [],
+    jobHistory: jobHistory || [],
+    personalWebsite: personalWebsite || "",
+    linkedin: linkedin,
     instagram: instagram || "",
     git: git || "",
   };
