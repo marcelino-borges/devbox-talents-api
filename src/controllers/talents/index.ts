@@ -21,8 +21,9 @@ export const getTalents = async (_: Request, res: Response) => {
 export const getTalent = async (req: Request, res: Response) => {
   const id = req.query.id as string;
   const email = req.query.email as string;
+  const authId = req.query.authId as string;
 
-  if (!id?.length && !email?.length) {
+  if (!id?.length && !email?.length && !!authId?.length) {
     return res.status(400).json({
       message: "Talent ID or email required.",
       data: null,
@@ -30,7 +31,7 @@ export const getTalent = async (req: Request, res: Response) => {
   }
 
   try {
-    const talent = await TalentsService.getTalent({ id, email });
+    const talent = await TalentsService.getTalent({ id, email, authId });
 
     return res.status(200).json({
       message: "Talent found",

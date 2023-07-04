@@ -66,6 +66,7 @@ export interface Skill {
 export interface TalentQuery {
   id?: string;
   email?: string;
+  authId?: string;
 }
 
 const educationSchema = new Schema<Education>(

@@ -10,9 +10,9 @@ export const getTalents = async () => {
   return found;
 };
 
-export const getTalent = async ({ id, email }: TalentQuery) => {
+export const getTalent = async ({ id, email, authId }: TalentQuery) => {
   const found = await TalentDB.findOne({
-    $or: [{ _id: id }, { email }],
+    $or: [{ _id: id }, { email }, { authId }],
   });
 
   if (!found) {
