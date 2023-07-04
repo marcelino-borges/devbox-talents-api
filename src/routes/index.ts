@@ -4,7 +4,7 @@ import * as TalentsControllers from "../controllers/talents";
 const mainRouter = express.Router();
 
 mainRouter.get("/talents", TalentsControllers.getTalents);
-mainRouter.get("/talents", TalentsControllers.getTalent);
+mainRouter.get("/talents/search", TalentsControllers.getTalent);
 mainRouter.post("/talents", TalentsControllers.createTalent);
 mainRouter.put("/talents", TalentsControllers.updateTalent);
 mainRouter.delete("/talents", TalentsControllers.deleteTalent);
