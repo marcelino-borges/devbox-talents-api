@@ -108,6 +108,7 @@ const talentSchema = new Schema<Talent>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    authId: { type: String, required: true, unique: true },
     languages: { type: [skillSchema], default: [] },
     frameworks: { type: [skillSchema], default: [] },
     databases: { type: [skillSchema], default: [] },
@@ -126,6 +127,6 @@ const talentSchema = new Schema<Talent>(
   { timestamps: true }
 );
 
-talentSchema.index({ email: 1 });
+talentSchema.index({ email: 1, authId: 1 });
 
 export default model<Talent>("talents", talentSchema);
