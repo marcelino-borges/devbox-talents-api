@@ -7,7 +7,7 @@ export const getTalents = async (_: Request, res: Response) => {
     const talents = await TalentsService.getTalents();
 
     return res.status(200).json({
-      message: "Talents found",
+      message: "Talentos localizados com sucesso.",
       data: talents,
     });
   } catch (error: any) {
@@ -23,9 +23,9 @@ export const getTalent = async (req: Request, res: Response) => {
   const email = req.query.email as string;
   const authId = req.query.authId as string;
 
-  if (!id?.length && !email?.length && !!authId?.length) {
+  if (!id?.length && !email?.length && !authId?.length) {
     return res.status(400).json({
-      message: "Talent ID or email required.",
+      message: "ID, e-mail ou authId obrigatório.",
       data: null,
     });
   }
@@ -34,7 +34,7 @@ export const getTalent = async (req: Request, res: Response) => {
     const talent = await TalentsService.getTalent({ id, email, authId });
 
     return res.status(200).json({
-      message: "Talent found",
+      message: "Talento localizado.",
       data: talent,
     });
   } catch (error: any) {
@@ -62,28 +62,28 @@ export const createTalent = async (req: Request, res: Response) => {
 
   if (!firstName?.length) {
     return res.status(400).json({
-      message: "Talent first name required.",
+      message: "Nome obrigatório.",
       data: null,
     });
   }
 
   if (!lastName?.length) {
     return res.status(400).json({
-      message: "Talent last name required.",
+      message: "Sobrenome obrigatório.",
       data: null,
     });
   }
 
   if (!email?.length) {
     return res.status(400).json({
-      message: "Talent email required.",
+      message: "E-mail obrigatório.",
       data: null,
     });
   }
 
   if (!social?.linkedin?.length) {
     return res.status(400).json({
-      message: "Talent linkedin required.",
+      message: "LinkedIn obrigatório.",
       data: null,
     });
   }
@@ -106,7 +106,7 @@ export const createTalent = async (req: Request, res: Response) => {
     const talentCreated = await TalentsService.createTalent(talentToCreate);
 
     return res.status(200).json({
-      message: "Talent created",
+      message: "Talento criado.",
       data: talentCreated,
     });
   } catch (error: any) {
@@ -135,35 +135,35 @@ export const updateTalent = async (req: Request, res: Response) => {
 
   if (!_id?.length) {
     return res.status(400).json({
-      message: "Talent ID required.",
+      message: "ID do talento obrigatório.",
       data: null,
     });
   }
 
   if (!firstName?.length) {
     return res.status(400).json({
-      message: "Talent first name required.",
+      message: "Nome obrigatório.",
       data: null,
     });
   }
 
   if (!lastName?.length) {
     return res.status(400).json({
-      message: "Talent last name required.",
+      message: "Sobrenome obrigatório.",
       data: null,
     });
   }
 
   if (!email?.length) {
     return res.status(400).json({
-      message: "Talent email required.",
+      message: "E-mail obrigatório.",
       data: null,
     });
   }
 
   if (!social?.linkedin?.length) {
     return res.status(400).json({
-      message: "Talent linkedin required.",
+      message: "LinkedIn obrigatório",
       data: null,
     });
   }
@@ -186,7 +186,7 @@ export const updateTalent = async (req: Request, res: Response) => {
     const talentUpdated = await TalentsService.createTalent(talentToUpdate);
 
     return res.status(200).json({
-      message: "Talent updated",
+      message: "Talento atualizado.",
       data: talentUpdated,
     });
   } catch (error: any) {
@@ -204,7 +204,7 @@ export const deleteTalent = async (req: Request, res: Response) => {
     await TalentsService.deleteTalent(id);
 
     return res.status(200).json({
-      message: "Talent deleted",
+      message: "Talento deletado.",
       data: null,
     });
   } catch (error: any) {
