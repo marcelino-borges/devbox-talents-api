@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import TalentDB, { Talent, TalentQuery } from "../../models/talents";
 
 export const getTalents = async () => {
@@ -12,7 +13,7 @@ export const getTalents = async () => {
 
 export const getTalent = async ({ id, email, authId }: TalentQuery) => {
   const found = await TalentDB.findOne({
-    $or: [{ _id: id }, { email }, { authId }],
+    $or: [{ _id: new Types.ObjectId(id) }, { email }, { authId }],
   });
 
   if (!found) {
