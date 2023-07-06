@@ -12,8 +12,22 @@ export const getTalents = async () => {
 };
 
 export const getTalent = async ({ id, email, authId }: TalentQuery) => {
+  const query = [];
+
+  if (id) {
+    query.push({ _id: id });
+  }
+
+  if (email) {
+    query.push({ email });
+  }
+
+  if (authId) {
+    query.push({ authId });
+  }
+
   const found = await TalentDB.findOne({
-    $or: [{ _id: new Types.ObjectId(id) }, { email }, { authId }],
+    $or: query,
   });
 
   if (!found) {
