@@ -12,6 +12,7 @@ export interface Talent {
   otherSkills?: Skill[];
   jobHistory?: Job[];
   educationHistory?: Education[];
+  isAdmin?: boolean;
   social: {
     personalWebsite?: string;
     linkedin: string;
@@ -115,6 +116,7 @@ const talentSchema = new Schema<Talent>(
     otherSkills: { type: [skillSchema], default: [] },
     jobHistory: { type: [jobSchema], default: [] },
     educationHistory: { type: [educationSchema], default: [] },
+    isAdmin: { type: Boolean, default: false },
     social: {
       type: {
         personalWebsite: { type: String },
