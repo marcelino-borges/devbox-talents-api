@@ -96,7 +96,7 @@ const jobSchema = new Schema<Job>(
     locationType: { type: Number, required: true },
     currentEmployment: { type: Boolean, required: true },
     startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true },
+    endDate: { type: Date },
     description: { type: String, required: true },
     skills: { type: [skillSchema], default: [] },
   },
