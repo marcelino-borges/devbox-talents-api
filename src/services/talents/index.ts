@@ -11,6 +11,18 @@ export const queryTalents = async (
     if (!query) {
       result = await TalentDB.aggregate([
         {
+          $match: {
+            $or: [
+              {
+                isAdmin: false,
+              },
+              {
+                isAdmin: undefined,
+              },
+            ],
+          },
+        },
+        {
           $project: {
             firstName: 1,
             lastName: 1,
@@ -63,6 +75,12 @@ export const queryTalents = async (
               },
               { "educationHistory.course": { $regex: query, $options: "i" } },
               { "educationHistory.course": { $regex: query, $options: "i" } },
+              {
+                isAdmin: false,
+              },
+              {
+                isAdmin: undefined,
+              },
             ],
           },
         },
