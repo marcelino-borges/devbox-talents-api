@@ -7,6 +7,15 @@ export const queryTalents = async (
 ) => {
   try {
     let result: any = null;
+    const project = {
+      firstName: 1,
+      lastName: 1,
+      email: 1,
+      languages: 1,
+      frameworks: 1,
+      databases: 1,
+      otherSkills: 1,
+    };
 
     if (!query) {
       result = await TalentDB.aggregate([
@@ -23,11 +32,7 @@ export const queryTalents = async (
           },
         },
         {
-          $project: {
-            firstName: 1,
-            lastName: 1,
-            email: 1,
-          },
+          $project: project,
         },
         {
           $sort: {
@@ -85,11 +90,7 @@ export const queryTalents = async (
           },
         },
         {
-          $project: {
-            firstName: 1,
-            lastName: 1,
-            email: 1,
-          },
+          $project: project,
         },
         {
           $sort: {
