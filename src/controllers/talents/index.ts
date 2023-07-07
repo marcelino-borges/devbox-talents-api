@@ -2,6 +2,32 @@ import { Request, Response } from "express";
 import * as TalentsService from "../../services/talents";
 import { Talent } from "../../models/talents";
 
+export const queryTalents = async (req: Request, res: Response) => {
+  const { q: query, pageNumber, pageSize } = req.query;
+
+  try {
+    const talents = await TalentsService.queryTalents(
+      pageNumber !== undefined && !isNaN(Number(pageNumber))
+        ? Number(pageNumber)
+        : 1,
+      pageSize !== undefined && !isNaN(Number(pageSize))
+        ? Number(pageSize)
+        : 10,
+      query as string
+    );
+
+    return res.status(200).json({
+      message: "Busca realizada com sucesso.",
+      data: talents,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 export const getTalents = async (_: Request, res: Response) => {
   try {
     const talents = await TalentsService.getTalents();

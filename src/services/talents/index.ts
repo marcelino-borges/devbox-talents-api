@@ -1,5 +1,111 @@
-import { Types } from "mongoose";
 import TalentDB, { Talent, TalentQuery } from "../../models/talents";
+
+export const queryTalents = async (
+  pageNumber: number,
+  pageSize: number,
+  query?: string
+) => {
+  try {
+    let result: any = null;
+
+    if (!query) {
+      result = await TalentDB.aggregate([
+        {
+          $project: {
+            firstName: 1,
+            lastName: 1,
+            email: 1,
+          },
+        },
+        {
+          $sort: {
+            firstName: 1,
+            lastName: 1,
+          },
+        },
+        {
+          $facet: {
+            items: [
+              { $skip: pageNumber > 0 ? (pageNumber - 1) * pageSize : 0 },
+              { $limit: pageSize },
+            ],
+            total: [
+              {
+                $count: "count",
+              },
+            ],
+          },
+        },
+      ]);
+    } else {
+      result = await TalentDB.aggregate([
+        {
+          $match: {
+            $or: [
+              { firstName: { $regex: query, $options: "i" } },
+              { lastName: { $regex: query, $options: "i" } },
+              { email: { $regex: query, $options: "i" } },
+              { "languages.label": { $regex: query, $options: "i" } },
+              { "languages.value": { $regex: query, $options: "i" } },
+              { "jobHistory.companyName": { $regex: query, $options: "i" } },
+              { "jobHistory.roleName": { $regex: query, $options: "i" } },
+              { "frameworks.label": { $regex: query, $options: "i" } },
+              { "frameworks.value": { $regex: query, $options: "i" } },
+              { "databases.label": { $regex: query, $options: "i" } },
+              { "databases.value": { $regex: query, $options: "i" } },
+              { "otherSkills.label": { $regex: query, $options: "i" } },
+              { "otherSkills.value": { $regex: query, $options: "i" } },
+              {
+                "educationHistory.institution": {
+                  $regex: query,
+                  $options: "i",
+                },
+              },
+              { "educationHistory.course": { $regex: query, $options: "i" } },
+              { "educationHistory.course": { $regex: query, $options: "i" } },
+            ],
+          },
+        },
+        {
+          $project: {
+            firstName: 1,
+            lastName: 1,
+            email: 1,
+          },
+        },
+        {
+          $sort: {
+            firstName: 1,
+            lastName: 1,
+          },
+        },
+        {
+          $facet: {
+            items: [
+              { $skip: pageNumber > 0 ? (pageNumber - 1) * pageSize : 0 },
+              { $limit: pageSize },
+            ],
+            total: [
+              {
+                $count: "count",
+              },
+            ],
+          },
+        },
+      ]);
+    }
+
+    return {
+      talents: result[0].items,
+      total: result[0].total[0].count,
+    };
+  } catch (error: any) {
+    return {
+      talents: [],
+      total: 0,
+    };
+  }
+};
 
 export const getTalents = async () => {
   const found = await TalentDB.find();

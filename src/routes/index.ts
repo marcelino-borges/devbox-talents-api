@@ -3,6 +3,7 @@ import * as TalentsControllers from "../controllers/talents";
 
 const mainRouter = express.Router();
 
+mainRouter.get("/talents/search", TalentsControllers.queryTalents);
 mainRouter.get("/talents", TalentsControllers.getTalents);
 mainRouter.get("/talents/search", TalentsControllers.getTalent);
 mainRouter.post("/talents", TalentsControllers.createTalent);
