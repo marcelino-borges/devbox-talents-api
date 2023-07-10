@@ -1,20 +1,38 @@
 import { Request, Response } from "express";
 import * as TalentsService from "../../services/talents";
-import { Talent } from "../../models/talents";
+import { Talent, TalentSearchQuery } from "../../models/talents";
 
 export const queryTalents = async (req: Request, res: Response) => {
-  const { q: query, pageNumber, pageSize } = req.query;
+  const {
+    freeText,
+    pageNumber,
+    pageSize,
+    name,
+    email,
+    languages,
+    frameworks,
+    databases,
+    otherSkills,
+  } = req.query as TalentSearchQuery;
 
   try {
-    const talents = await TalentsService.queryTalents(
-      pageNumber !== undefined && !isNaN(Number(pageNumber))
-        ? Number(pageNumber)
-        : 1,
-      pageSize !== undefined && !isNaN(Number(pageSize))
-        ? Number(pageSize)
-        : 10,
-      query as string
-    );
+    const talents = await TalentsService.queryTalents({
+      pageNumber:
+        pageNumber !== undefined && !isNaN(Number(pageNumber))
+          ? Number(pageNumber)
+          : 1,
+      pageSize:
+        pageSize !== undefined && !isNaN(Number(pageSize))
+          ? Number(pageSize)
+          : 10,
+      freeText,
+      name,
+      email,
+      languages,
+      frameworks,
+      databases,
+      otherSkills,
+    });
 
     return res.status(200).json({
       message: "Busca realizada com sucesso.",

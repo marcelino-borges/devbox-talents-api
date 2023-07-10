@@ -64,10 +64,22 @@ export interface Skill {
   value: string;
 }
 
-export interface TalentQuery {
+export interface GetTalentQuery {
   id?: string;
   email?: string;
   authId?: string;
+}
+
+export interface TalentSearchQuery {
+  pageNumber?: number;
+  pageSize?: number;
+  freeText?: string;
+  name?: string;
+  email?: string;
+  languages?: string;
+  frameworks?: string;
+  databases?: string;
+  otherSkills?: string;
 }
 
 const educationSchema = new Schema<Education>(

@@ -1,10 +1,22 @@
-import TalentDB, { Talent, TalentQuery } from "../../models/talents";
+import TalentDB, {
+  Talent,
+  GetTalentQuery,
+  TalentSearchQuery,
+} from "../../models/talents";
 
-export const queryTalents = async (
-  pageNumber: number,
-  pageSize: number,
-  query?: string
-) => {
+export const queryTalents = async (query: TalentSearchQuery) => {
+  const {
+    pageNumber,
+    pageSize,
+    freeText,
+    name,
+    email,
+    languages,
+    frameworks,
+    databases,
+    otherSkills,
+  } = query;
+
   try {
     let result: any = null;
     const project = {
@@ -17,102 +29,123 @@ export const queryTalents = async (
       otherSkills: 1,
     };
 
-    if (!query) {
-      result = await TalentDB.aggregate([
+    const createRegex = (string: string) => ({ $regex: string, $options: "i" });
+    let orFreeText: any[] = [];
+
+    if (freeText?.length) {
+      const freeTextRegex = createRegex(freeText);
+
+      let fields = [
+        { firstName: freeTextRegex },
+        { lastName: freeTextRegex },
+        { email: freeTextRegex },
+        { "languages.label": freeTextRegex },
+        { "languages.value": freeTextRegex },
+        { "jobHistory.companyName": freeTextRegex },
+        { "jobHistory.roleName": freeTextRegex },
+        { "frameworks.label": freeTextRegex },
+        { "frameworks.value": freeTextRegex },
+        { "databases.label": freeTextRegex },
+        { "databases.value": freeTextRegex },
+        { "otherSkills.label": freeTextRegex },
+        { "otherSkills.value": freeTextRegex },
         {
-          $match: {
-            $or: [
-              {
-                isAdmin: false,
-              },
-              {
-                isAdmin: undefined,
-              },
-            ],
-          },
+          "educationHistory.institution": freeTextRegex,
+        },
+        { "educationHistory.course": freeTextRegex },
+        { "educationHistory.course": freeTextRegex },
+        {
+          isAdmin: false,
         },
         {
-          $project: project,
+          isAdmin: undefined,
         },
-        {
-          $sort: {
-            firstName: 1,
-            lastName: 1,
-          },
-        },
-        {
-          $facet: {
-            items: [
-              { $skip: pageNumber > 0 ? (pageNumber - 1) * pageSize : 0 },
-              { $limit: pageSize },
-            ],
-            total: [
-              {
-                $count: "count",
-              },
-            ],
-          },
-        },
-      ]);
-    } else {
-      result = await TalentDB.aggregate([
-        {
-          $match: {
-            $or: [
-              { firstName: { $regex: query, $options: "i" } },
-              { lastName: { $regex: query, $options: "i" } },
-              { email: { $regex: query, $options: "i" } },
-              { "languages.label": { $regex: query, $options: "i" } },
-              { "languages.value": { $regex: query, $options: "i" } },
-              { "jobHistory.companyName": { $regex: query, $options: "i" } },
-              { "jobHistory.roleName": { $regex: query, $options: "i" } },
-              { "frameworks.label": { $regex: query, $options: "i" } },
-              { "frameworks.value": { $regex: query, $options: "i" } },
-              { "databases.label": { $regex: query, $options: "i" } },
-              { "databases.value": { $regex: query, $options: "i" } },
-              { "otherSkills.label": { $regex: query, $options: "i" } },
-              { "otherSkills.value": { $regex: query, $options: "i" } },
-              {
-                "educationHistory.institution": {
-                  $regex: query,
-                  $options: "i",
-                },
-              },
-              { "educationHistory.course": { $regex: query, $options: "i" } },
-              { "educationHistory.course": { $regex: query, $options: "i" } },
-              {
-                isAdmin: false,
-              },
-              {
-                isAdmin: undefined,
-              },
-            ],
-          },
-        },
-        {
-          $project: project,
-        },
-        {
-          $sort: {
-            firstName: 1,
-            lastName: 1,
-          },
-        },
-        {
-          $facet: {
-            items: [
-              { $skip: pageNumber > 0 ? (pageNumber - 1) * pageSize : 0 },
-              { $limit: pageSize },
-            ],
-            total: [
-              {
-                $count: "count",
-              },
-            ],
-          },
-        },
-      ]);
+      ];
+
+      orFreeText = [...fields];
     }
+
+    const andOtherFields = [];
+
+    if (name?.length) {
+      andOtherFields.push({
+        firstName: name,
+      });
+      andOtherFields.push({
+        lastName: name,
+      });
+    }
+
+    if (email?.length) {
+      andOtherFields.push({
+        email,
+      });
+    }
+
+    const getArrayFromString = (originalString: string) => {
+      return originalString.replace(/\s/, "").split(",");
+    };
+    if (languages?.length) {
+      let languagesAsArray = getArrayFromString(languages);
+
+      andOtherFields.push({
+        languages: { $all: languagesAsArray },
+      });
+    }
+
+    if (frameworks?.length) {
+      let frameworksAsArray = getArrayFromString(frameworks);
+
+      andOtherFields.push({
+        frameworks: { $all: frameworksAsArray },
+      });
+    }
+
+    if (databases?.length) {
+      let databasesAsArray = getArrayFromString(databases);
+
+      andOtherFields.push({
+        databases: { $all: databasesAsArray },
+      });
+    }
+
+    if (otherSkills?.length) {
+      let otherSkillsAsArray = getArrayFromString(otherSkills);
+
+      andOtherFields.push({
+        otherSkills: { $all: otherSkillsAsArray },
+      });
+    }
+
+    result = await TalentDB.aggregate([
+      {
+        $match: {
+          $and: [{ $or: orFreeText }, ...andOtherFields],
+        },
+      },
+      {
+        $project: project,
+      },
+      {
+        $sort: {
+          firstName: 1,
+          lastName: 1,
+        },
+      },
+      {
+        $facet: {
+          items: [
+            { $skip: pageNumber! > 0 ? (pageNumber! - 1) * pageSize! : 0 },
+            { $limit: pageSize! },
+          ],
+          total: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+    ]);
 
     return {
       talents: result[0].items,
@@ -136,7 +169,7 @@ export const getTalents = async () => {
   return found;
 };
 
-export const getTalent = async ({ id, email, authId }: TalentQuery) => {
+export const getTalent = async ({ id, email, authId }: GetTalentQuery) => {
   const query = [];
 
   if (id) {
