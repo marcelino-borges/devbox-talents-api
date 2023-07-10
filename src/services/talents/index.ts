@@ -65,64 +65,98 @@ export const queryTalents = async (query: TalentSearchQuery) => {
       orFreeText = [...fields];
     }
 
-    const andOtherFields = [];
+    const orOtherFields = [];
+    const orNames = [];
 
     if (name?.length) {
-      andOtherFields.push({
-        firstName: name,
+      orNames.push({
+        firstName: createRegex(name),
       });
-      andOtherFields.push({
-        lastName: name,
+      orNames.push({
+        lastName: createRegex(name),
       });
     }
 
     if (email?.length) {
-      andOtherFields.push({
-        email,
+      orOtherFields.push({
+        email: createRegex(email),
       });
     }
 
     const getArrayFromString = (originalString: string) => {
       return originalString.replace(/\s/, "").split(",");
     };
+
+    const getSkillElementMatch = (skillsArray: string[]) => {
+      const or: any[] = [];
+
+      skillsArray.forEach((skill: string) => {
+        or.push({
+          $or: [
+            {
+              label: {
+                $regex: skill,
+                $options: "i",
+              },
+            },
+            {
+              value: {
+                $regex: skill,
+                $options: "i",
+              },
+            },
+          ],
+        });
+      });
+
+      return {
+        $elemMatch: {
+          $or: or,
+        },
+      };
+    };
+
     if (languages?.length) {
       let languagesAsArray = getArrayFromString(languages);
 
-      andOtherFields.push({
-        languages: { $all: languagesAsArray },
+      orOtherFields.push({
+        languages: getSkillElementMatch(languagesAsArray),
       });
     }
 
     if (frameworks?.length) {
       let frameworksAsArray = getArrayFromString(frameworks);
 
-      andOtherFields.push({
-        frameworks: { $all: frameworksAsArray },
+      orOtherFields.push({
+        frameworks: getSkillElementMatch(frameworksAsArray),
       });
     }
 
     if (databases?.length) {
       let databasesAsArray = getArrayFromString(databases);
 
-      andOtherFields.push({
-        databases: { $all: databasesAsArray },
+      orOtherFields.push({
+        databases: getSkillElementMatch(databasesAsArray),
       });
     }
 
     if (otherSkills?.length) {
       let otherSkillsAsArray = getArrayFromString(otherSkills);
 
-      andOtherFields.push({
-        otherSkills: { $all: otherSkillsAsArray },
+      orOtherFields.push({
+        otherSkills: getSkillElementMatch(otherSkillsAsArray),
       });
     }
 
-    result = await TalentDB.aggregate([
-      {
-        $match: {
-          $and: [{ $or: orFreeText }, ...andOtherFields],
-        },
-      },
+    let and: any = [];
+
+    if (orFreeText?.length) and = [{ $or: orFreeText }];
+    if (orNames?.length) and = [...and, { $or: orNames }];
+    if (orOtherFields?.length) and = [...and, ...orOtherFields];
+
+    console.log("query: ", JSON.stringify(and));
+
+    let basicFilters: any[] = [
       {
         $project: project,
       },
@@ -145,6 +179,19 @@ export const queryTalents = async (query: TalentSearchQuery) => {
           ],
         },
       },
+    ];
+
+    result = await TalentDB.aggregate([
+      ...(and.length
+        ? [
+            {
+              $match: {
+                $and: and,
+              },
+            },
+          ]
+        : []),
+      ...basicFilters,
     ]);
 
     return {
