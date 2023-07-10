@@ -154,8 +154,6 @@ export const queryTalents = async (query: TalentSearchQuery) => {
     if (orNames?.length) and = [...and, { $or: orNames }];
     if (orOtherFields?.length) and = [...and, ...orOtherFields];
 
-    console.log("query: ", JSON.stringify(and));
-
     let basicFilters: any[] = [
       {
         $project: project,
