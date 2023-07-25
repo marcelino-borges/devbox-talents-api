@@ -10,7 +10,7 @@ export interface Talent {
   frameworks?: Skill[];
   databases?: Skill[];
   otherSkills?: Skill[];
-  jobHistory?: Job[];
+  jobHistory?: JobExperience[];
   educationHistory?: Education[];
   isAdmin?: boolean;
   social: {
@@ -23,7 +23,7 @@ export interface Talent {
   updatedAt?: Date;
 }
 
-export interface Job {
+export interface JobExperience {
   companyName: string;
   roleName: string;
   employmentType: EmploymentType;
@@ -92,7 +92,7 @@ const educationSchema = new Schema<Education>(
   { timestamps: true }
 );
 
-const skillSchema = new Schema<Skill>(
+export const skillSchema = new Schema<Skill>(
   {
     label: { type: String, required: true },
     value: { type: String, required: true },
@@ -100,7 +100,7 @@ const skillSchema = new Schema<Skill>(
   { timestamps: true }
 );
 
-const jobSchema = new Schema<Job>(
+const jobExperienceSchema = new Schema<JobExperience>(
   {
     companyName: { type: String, required: true },
     roleName: { type: String, required: true },
@@ -126,7 +126,7 @@ const talentSchema = new Schema<Talent>(
     frameworks: { type: [skillSchema], default: [] },
     databases: { type: [skillSchema], default: [] },
     otherSkills: { type: [skillSchema], default: [] },
-    jobHistory: { type: [jobSchema], default: [] },
+    jobHistory: { type: [jobExperienceSchema], default: [] },
     educationHistory: { type: [educationSchema], default: [] },
     isAdmin: { type: Boolean, default: false },
     social: {
