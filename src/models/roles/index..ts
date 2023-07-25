@@ -1,9 +1,9 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import { EmploymentType, LocationType, Skill, skillSchema } from "../talents";
 
 export interface Job {
   _id?: string;
-  creatorId: string;
+  creatorId: any;
   companyName: string;
   roleName: string;
   employmentType: EmploymentType;
@@ -33,6 +33,11 @@ export enum SeniorityLevel {
 
 const jobSchema = new Schema<Job>(
   {
+    creatorId: {
+      type: Types.ObjectId,
+      required: true,
+      ref: "talents",
+    },
     companyName: { type: String, required: true },
     roleName: { type: String, required: true },
     employmentType: { type: Number, required: true },
@@ -54,6 +59,6 @@ const jobSchema = new Schema<Job>(
   { timestamps: true }
 );
 
-jobSchema.index({ email: 1, authId: 1 });
+jobSchema.index({ email: 1, creatorId: 1 });
 
 export default model<Job>("jobs", jobSchema);
