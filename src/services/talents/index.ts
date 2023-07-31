@@ -3,6 +3,11 @@ import TalentDB, {
   GetTalentQuery,
   TalentSearchQuery,
 } from "../../models/talents";
+import {
+  createRegex,
+  getArrayFromString,
+  getSkillElementMatch,
+} from "../../utils";
 
 export const queryTalents = async (query: TalentSearchQuery) => {
   const {
@@ -29,7 +34,6 @@ export const queryTalents = async (query: TalentSearchQuery) => {
       otherSkills: 1,
     };
 
-    const createRegex = (string: string) => ({ $regex: string, $options: "i" });
     let orFreeText: any[] = [];
 
     if (freeText?.length) {
@@ -82,39 +86,6 @@ export const queryTalents = async (query: TalentSearchQuery) => {
         email: createRegex(email),
       });
     }
-
-    const getArrayFromString = (originalString: string) => {
-      return originalString.replace(/\s/, "").split(",");
-    };
-
-    const getSkillElementMatch = (skillsArray: string[]) => {
-      const or: any[] = [];
-
-      skillsArray.forEach((skill: string) => {
-        or.push({
-          $or: [
-            {
-              label: {
-                $regex: skill,
-                $options: "i",
-              },
-            },
-            {
-              value: {
-                $regex: skill,
-                $options: "i",
-              },
-            },
-          ],
-        });
-      });
-
-      return {
-        $elemMatch: {
-          $or: or,
-        },
-      };
-    };
 
     if (languages?.length) {
       let languagesAsArray = getArrayFromString(languages);
@@ -197,10 +168,7 @@ export const queryTalents = async (query: TalentSearchQuery) => {
       total: result[0].total[0].count,
     };
   } catch (error: any) {
-    return {
-      talents: [],
-      total: 0,
-    };
+    throw error;
   }
 };
 

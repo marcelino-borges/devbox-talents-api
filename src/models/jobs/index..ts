@@ -31,6 +31,17 @@ export enum SeniorityLevel {
   CLEVEL = 8,
 }
 
+export interface JobQuery {
+  roleName?: string;
+  employmentType?: EmploymentType;
+  locationType?: LocationType;
+  mandatorySkills?: string;
+  preferredSkills?: string;
+  seniorityLevel?: SeniorityLevel;
+  pageSize?: number;
+  pageNumber?: number;
+}
+
 const jobSchema = new Schema<Job>(
   {
     creatorId: {
