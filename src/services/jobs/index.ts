@@ -153,5 +153,7 @@ export const queryJobs = async (query: JobQuery, requesterUserId: string) => {
       jobs: result[0].items,
       total: result[0].total[0].count,
     };
-  } catch (error: any) {}
+  } catch (error: any) {
+    throw error;
+  }
 };
