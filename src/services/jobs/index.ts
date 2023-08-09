@@ -1,4 +1,4 @@
-import { JobQuery } from "../../models/jobs/index.";
+import JobsDB, { Job, JobQuery } from "../../models/jobs";
 import TalentDB, {
   Talent,
   GetTalentQuery,
@@ -153,6 +153,70 @@ export const queryJobs = async (query: JobQuery, requesterUserId: string) => {
       jobs: result[0].items,
       total: result[0].total[0].count,
     };
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const getJobById = async (id: string) => {
+  try {
+    const foundJob = await JobsDB.findById(id);
+
+    if (!foundJob) {
+      throw new Error("Could not find the job.");
+    }
+
+    return foundJob;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const createJob = async (job: Job) => {
+  try {
+    const createdJob = await JobsDB.create(job);
+
+    if (!createdJob) {
+      throw new Error("Could not create the job.");
+    }
+
+    return createdJob;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const updateJob = async (job: Job) => {
+  try {
+    const updatedJob = await JobsDB.findOneAndUpdate(
+      {
+        _id: job._id,
+      },
+      job,
+      { new: true }
+    );
+
+    if (!updatedJob) {
+      throw new Error("Could not update the job.");
+    }
+
+    return updatedJob;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const deleteJob = async (job: Job) => {
+  try {
+    const deletedJob = await JobsDB.findOneAndDelete({
+      _id: job._id,
+    });
+
+    if (!deletedJob) {
+      throw new Error("Could not delete the job.");
+    }
+
+    return deletedJob;
   } catch (error: any) {
     throw error;
   }
